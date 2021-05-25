@@ -12,22 +12,24 @@ namespace MassTransitStarted.Components.Consumers
 
             if (context.Message.CustomerNumber.Contains("TEST"))
             {
-                await context.RespondAsync<OrderSubmissionRejected>(new
-                {
-                    InVar.Timestamp,
-                    OrderId = submitOrder.Id,
-                    CustomerNumber = submitOrder.CustomerNumber,
-                    Reason = $"Test Customer cannot submit orders: {submitOrder.CustomerNumber}"
-                });
+                if (context.RequestId != null)
+                    await context.RespondAsync<OrderSubmissionRejected>(new
+                    {
+                        InVar.Timestamp,
+                        OrderId = submitOrder.Id,
+                        CustomerNumber = submitOrder.CustomerNumber,
+                        Reason = $"Test Customer cannot submit orders: {submitOrder.CustomerNumber}"
+                    });
                 return;
             }
 
-            await context.RespondAsync<OrderSubmissionAccepted>(new
-            {
-                InVar.Timestamp,
-                OrderId = submitOrder.Id,
-                CustomerNumber = submitOrder.CustomerNumber
-            });
+            if (context.RequestId != null)
+                await context.RespondAsync<OrderSubmissionAccepted>(new
+                {
+                    InVar.Timestamp,
+                    OrderId = submitOrder.Id,
+                    CustomerNumber = submitOrder.CustomerNumber
+                });
         }
     }
 }

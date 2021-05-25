@@ -1,6 +1,5 @@
-using MassTransit;
-using MassTransitStarted.Components.Consumers;
-using MassTransitStarted.Contracts;
+using MassTransitStarted.Api.Configuration;
+using MassTransitStarted.Api.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -22,11 +21,11 @@ namespace MassTransitStarted.Api
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddMediator((configuration) =>
-            {
-                configuration.AddConsumer<SubmitOrderConsumer>();
-                configuration.AddRequestClient<SubmitOrder>();
-            });
+            // Set values to object with contains values by RabbitMQ
+            services.Configure<RabbitSettings>(Configuration.GetSection("RabbitSettings"));
+
+            // Configuration to MassTransit
+            services.ConfigureMassTransit();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
